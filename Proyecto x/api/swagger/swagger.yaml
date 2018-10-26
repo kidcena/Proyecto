@@ -1,0 +1,194 @@
+swagger: "2.0"
+info:
+  version: "0.0.1"
+  title: Proyecto X
+# during dev, should point to your local machine
+host: coral-airfoil-218814.appspot.com
+#host: copper-bot-213222.appspot.com
+# basePath prefixes all resource paths 
+basePath: /
+# 
+schemes:
+  # tip: remove http to make production-grade
+  - http
+  - https
+# format of bodies a client can send (Content-Type)
+consumes:
+  - application/json
+# format of the responses to the client (Accepts)
+produces:
+  - application/json
+paths:
+  /operadores:
+    x-swagger-router-controller: operadores.controller
+    get:
+      description: get the operadores list
+      operationId: getOperadores
+      parameters:
+        - name: name
+          in: query
+          type: string
+          required: false
+        - name: sort
+          in: query
+          type: string
+          required: false
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/GetOperadoresListResponse"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+    post:
+      description: add a new operador to the db
+      operationId: createOperador
+      parameters:
+        - in: body
+          name: operador
+          description: The operador to create.
+          schema:
+            $ref: "#/definitions/Operador"
+          required: true
+ 
+      responses:
+        "201":
+          description: Success
+          schema:
+            $ref: "#/definitions/GetOperadorResponse"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  /operadores/{id}:
+    x-swagger-router-controller: operadores.controller
+    get:
+      description: get a operador
+      operationId: getOperadorById
+      parameters:
+        - name: id
+          type: string
+          in: path
+          required: true
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/GetOperadorResponse"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+    put:
+      description: update an operador
+      operationId: updateOperador
+      parameters:
+        - name: id
+          description: operador id
+          type: string
+          in: path
+          required: true
+        - in: body
+          name: operator
+          description: The Operador to update.
+          schema:
+            $ref: "#/definitions/Operador"
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/GetOperadorResponse"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"  
+    delete:
+      description: delete a operador
+      operationId: deleteOperador
+      parameters:
+        - name: id
+          description: operador id
+          type: string
+          in: path
+          required: true
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/GetOperadorResponse"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  /swagger:
+    x-swagger-pipe: swagger_raw
+# complex objects have schema definitions
+definitions:
+  Operador:
+    type: object
+    properties:
+      nombre:
+        type: string
+        description: nombre del operador
+      email:
+        type: string
+        description: email del operador
+      password:
+        type: string
+        description: contraseña del operador
+  #  required:
+  #    - codigo
+  #    - nombre
+  #    - email
+  GetOperadorResponse:
+    type: object
+    properties:
+      id:
+        type: number
+        description: identifier
+      nombre:
+        type: string
+        description: nombre del operador
+      email:
+        type: string
+        description: email del operador
+      password:
+        type: string
+        description: contraseña del operador
+  #  required:
+  #    - id
+  #    - codigo
+  #    - nombre
+  GetOperadoresListResponse:
+    required:
+      - operadores
+    properties:
+      operadores:
+        type: array
+        items:
+          $ref: "#/definitions/GetOperadorResponse"
+
+  GeneralResponse:
+    type: object
+    properties:
+      message:
+        type: string
+    required:
+      - message
+  ErrorResponse:
+    type: object
+    properties:
+      error:
+        $ref: '#/definitions/ErrorIntResponse'
+  ErrorIntResponse:
+    properties:
+      code:
+        type: number
+      message:
+        type: string
+      description:
+        type: string
+    required:
+      - message
